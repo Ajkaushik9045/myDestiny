@@ -35,16 +35,35 @@ const userSchema = new Schema({
             }
         }
     },
-    photoUr:{
-        type:String,
-        validate:{
-
-        }
+    photoUr: {
+        type: String,
+        validate: {
+            validator: function (value) {
+                return /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i.test(value);
+            },
+            message: "Invalid profile picture URL",
+        },
     },
-    leetCodeCount:{
-        type:Number,
 
-    }
+    leetCodeCount: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+
+    streak: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    totalLectureCount: {
+        type: Number,
+        required: true,
+        min: 0
+    },
 
 
-});
+}, { timestamps: true });
+
+const User = mongoose.model("User", userSchema);
+module.exports = User;
