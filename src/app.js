@@ -71,7 +71,6 @@ app.use(
 // Routes
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/user', userRoutes)
-app.use('/api/v1/transaction', transactionRoutes)
 
 // Default route
 app.get('/', (req, res) => {
