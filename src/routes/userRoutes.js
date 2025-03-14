@@ -7,6 +7,7 @@ import {
 import authMiddleware from '../middlewares/authMiddleware.js'
 import {
     getAllUsers,
+    leactureUpdate,
     streakUpdate,
 } from '../controllers/userScoreControllers.js'
 
@@ -16,6 +17,7 @@ router.get('/profile', authMiddleware, userDetails)
 router.post('/update-user', authMiddleware, updateUserDetails)
 router.post('/change-password', authMiddleware, changePassword)
 router.post('/streak', authMiddleware, streakUpdate)
+router.post('/lecture', authMiddleware, leactureUpdate)
 router.get('/getUsers', authMiddleware, getAllUsers)
 
 export default router

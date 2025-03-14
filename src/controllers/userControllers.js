@@ -13,7 +13,7 @@ const userDetails = async (req, res) => {
 
         try {
             const response = await axios.get(
-                `https://leetcode-api.vercel.app/api/profile/${user.leetCodeUserName}`
+                `https://leetcode-api.vercel.app/api/profile/${user?.leetCodeUserName}`
             )
             const submission =
                 response.data?.data?.matchedUser?.submitStats

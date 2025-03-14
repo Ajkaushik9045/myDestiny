@@ -47,10 +47,10 @@ const registerUser = async (req, res) => {
 
 // Login user
 const loginUser = async (req, res) => {
-    const { email, password } = req.body
+    const { email, password, expoToken } = req.body
     const secret = process.env.SESSION_SECRET
     try {
-        const user = await User.findOne({ email })
+        const user = await User.findOne({email})
         if (!user) {
             return res.status(404).json({ message: 'User not found.' })
         }
@@ -75,6 +75,10 @@ const loginUser = async (req, res) => {
                 error.message
             )
         }
+
+        await User.findOneAndUpdate(email, {
+            $push: { expoToken: expoToken },
+        })
 
         const token = jwt.sign({ userId: user._id }, secret, {
             expiresIn: '7d',

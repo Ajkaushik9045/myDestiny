@@ -74,4 +74,30 @@ const getAllUsers = async (req, res) => {
     }
 }
 
-export { streakUpdate, getAllUsers }
+const leactureUpdate = async (req, res) => {
+    const { userId } = req.user
+    const { totalLectureCount } = req.body
+    try {
+        const user = await User.findById(userId)
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not Found' })
+        }
+
+        if (!totalLectureCount) {
+            return res
+                .status(404)
+                .json({ message: 'Total Lecture Count not Found' })
+        }
+
+        user.totalLectureCount = totalLectureCount
+        await user.save()
+
+        res.status(200).json({ user, message: 'Lecture Count Updated' })
+    } catch (error) {
+        console.error('Error fetching user details:', error.message)
+        res.status(500).json({ message: 'Server error', error: error.message })
+    }
+}
+
+export { streakUpdate, getAllUsers, leactureUpdate }
