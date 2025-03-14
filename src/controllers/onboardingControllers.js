@@ -1,13 +1,13 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../models/userModels.js'
-
 // JWT Secret Key (Use environment variable)
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'
 
 // Register a new user
 const registerUser = async (req, res) => {
-    const { userName, email, phoneNumber, password } = req.body
+    const secret = process.env.SESSION_SECRET
+    const { userName, email, phoneNumber, password, leetCodeUserName } =
+        req.body
 
     try {
         const existingUser = await User.findOne({ email })
@@ -25,9 +25,10 @@ const registerUser = async (req, res) => {
             leetCodeCount: 0,
             streak: 0,
             totalLectureCount: 0,
+            leetCodeUserName,
         })
 
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+        const token = jwt.sign({ userId: user._id }, secret, {
             expiresIn: '7d',
         })
 
@@ -47,7 +48,7 @@ const registerUser = async (req, res) => {
 // Login user
 const loginUser = async (req, res) => {
     const { email, password } = req.body
-
+    const secret = process.env.SESSION_SECRET
     try {
         const user = await User.findOne({ email })
         if (!user) {
@@ -59,7 +60,23 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' })
         }
 
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+        try {
+            const response = await axios.get(
+                `https://leetcode-api.vercel.app/api/profile/${user.leetCodeUserName}`
+            )
+            const submission =
+                response.data?.data?.matchedUser?.submitStats
+                    ?.acSubmissionNum[0]?.count
+            user.leetCodeCount = submission
+            await user.save()
+        } catch (error) {
+            console.error(
+                `Error fetching LeetCode data for ${user.leetCodeUserName}`,
+                error.message
+            )
+        }
+
+        const token = jwt.sign({ userId: user._id }, secret, {
             expiresIn: '7d',
         })
 

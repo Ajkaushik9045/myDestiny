@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 const authMiddleware = async (req, res, next) => {
     // Ensure the token is provided in the "Authorization" header as a Bearer token
     const token = req.header('Authorization')?.split(' ')[1]
-    const secret = process.env.SESSION_SECRET;
+    const secret = process.env.SESSION_SECRET
 
     // If no token is provided, deny authorization
     if (!token) {

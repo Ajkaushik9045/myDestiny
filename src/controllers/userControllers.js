@@ -1,24 +1,35 @@
 import User from '../models/userModels.js'
+import axios from 'axios'
 
 const userDetails = async (req, res) => {
-    const id = req.user.id
+    const { userId } = req.user
     try {
-        const user = await User.findById(id)
+        const user = await User.findById(userId)
         console.log(user)
 
         if (!user) {
             return res.status(404).json({ message: 'User not Found' })
         }
 
-        console.log('Fetched User:', user) // Debugging
+        try {
+            const response = await axios.get(
+                `https://leetcode-api.vercel.app/api/profile/${user.leetCodeUserName}`
+            )
+            const submission =
+                response.data?.data?.matchedUser?.submitStats
+                    ?.acSubmissionNum[0]?.count
+            console.log(submission)
 
-        res.status(200).json({
-            user_id: id,
-            user_name: user.fullName,
-            phone_number: user.phoneNumber,
-            email: user.email,
-            profile: user.profiles || [],
-        })
+            user.leetCodeCount = submission
+            await user.save()
+        } catch (error) {
+            console.error(
+                `Error fetching LeetCode data for ${user.leetCodeUserName}`,
+                error.message
+            )
+        }
+
+        res.status(200).json(user)
     } catch (error) {
         console.error('Error fetching user details:', error.message)
         res.status(500).json({ message: 'Server error', error: error.message })
@@ -27,7 +38,8 @@ const userDetails = async (req, res) => {
 
 const updateUserDetails = async (req, res) => {
     const id = req.user.id
-    const { user_name, phone_number, email, password } = req.body
+    const { user_name, phone_number, email, password, leetCodeUserName } =
+        req.body
 
     try {
         const user = await User.findById(id)

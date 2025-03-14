@@ -56,3 +56,4 @@ Thumbs.db
 coverage/
 *.lcov
 jest/
+.vercel

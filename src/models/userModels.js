@@ -46,7 +46,10 @@ const userSchema = new Schema(
             //     message: 'Invalid profile picture URL',
             // },
         },
-
+        leetCodeUserName: {
+            type: String,
+            required: true,
+        },
         leetCodeCount: {
             type: Number,
             required: true,
@@ -57,6 +60,9 @@ const userSchema = new Schema(
             type: Number,
             required: true,
             min: 0,
+        },
+        streakUpdateDate: {
+            type: String,
         },
         totalLectureCount: {
             type: Number,
